@@ -7,10 +7,12 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import org.fintecy.md.kraken.model.dto.ServerTimeResponse;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
 import static java.time.Instant.ofEpochSecond;
+import static java.util.Collections.emptyList;
 
 public class ServerTimeResponseDeserializer extends StdDeserializer<ServerTimeResponse> {
     public final static ServerTimeResponseDeserializer INSTANCE = new ServerTimeResponseDeserializer();
@@ -27,9 +29,9 @@ public class ServerTimeResponseDeserializer extends StdDeserializer<ServerTimeRe
             List<String> errors = new ArrayList<>();
             node.get("error").forEach(jsonNode ->
                     errors.add(jsonNode.asText()));
-            return ServerTimeResponse.errorResponse(errors);
+            return new ServerTimeResponse(Instant.EPOCH, errors);
         }
         var serverTime = ofEpochSecond(node.get("result").get("unixtime").asLong());
-        return ServerTimeResponse.dataResponse(serverTime);
+        return new ServerTimeResponse(serverTime, emptyList());
     }
 }

@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -20,6 +19,53 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @WireMockTest(httpPort = 7777)
 class KrakenClientTest {
+
+    @Test
+    void should_return_candle() throws ExecutionException, InterruptedException {
+        //given
+        var product = product("XXBTZUSD");
+        stubFor(get("/public/OHLC?pair=" + product.getCode() + "&interval=1")
+                .willReturn(aResponse()
+                        .withBodyFile("candle.json")));
+
+        var expected = List.of(
+                new Candle(product, Instant.parse("2021-03-25T08:59:00Z"),
+                        new BigDecimal("52591.9"),//open
+                        new BigDecimal("52599.9"),//high
+                        new BigDecimal("52591.8"),//low
+                        new BigDecimal("52599.9"),//close
+                        new BigDecimal("52599.1"),//vwap
+                        new BigDecimal("0.11091626"),//volume
+                        5 //count
+                ),
+                new Candle(product, Instant.parse("2021-03-25T09:00:00Z"),
+                        new BigDecimal("52600.0"),//open
+                        new BigDecimal("52674.9"),//high
+                        new BigDecimal("52599.9"),//low
+                        new BigDecimal("52665.2"),//close
+                        new BigDecimal("52643.3"),//vwap
+                        new BigDecimal("2.49035996"),//volume
+                        30 //count
+                ),
+                new Candle(product, Instant.parse("2021-03-25T09:01:00Z"),
+                        new BigDecimal("52677.7"),//open
+                        new BigDecimal("52686.4"),//high
+                        new BigDecimal("52602.1"),//low
+                        new BigDecimal("52609.5"),//close
+                        new BigDecimal("52634.5"),//vwap
+                        new BigDecimal("1.25810675"),//volume
+                        20 //count
+                )
+        );
+        //when
+        var actual = krakenClient()
+                .rootPath("http://localhost:7777")
+                .build()
+                .candles(product)
+                .get();
+        //then
+        assertEquals(expected, actual);
+    }
 
     @Test
     void should_return_ticker() throws ExecutionException, InterruptedException {
@@ -51,7 +97,6 @@ class KrakenClientTest {
         //then
         assertEquals(expected, actual);
     }
-
 
     @Test
     void should_return_products() throws ExecutionException, InterruptedException {

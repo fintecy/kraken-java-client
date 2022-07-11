@@ -1,6 +1,5 @@
 package org.fintecy.md.kraken;
 
-import org.fintecy.md.kraken.model.ProductCode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -8,6 +7,7 @@ import java.time.Instant;
 import java.util.concurrent.ExecutionException;
 
 import static java.time.temporal.ChronoUnit.SECONDS;
+import static org.fintecy.md.kraken.model.ProductCode.product;
 import static org.junit.jupiter.api.Assertions.*;
 
 class NoOpKrakenApiTest {
@@ -19,8 +19,13 @@ class NoOpKrakenApiTest {
     }
 
     @Test
+    void should_throw_exception_for_ohlc() {
+        assertThrows(IllegalStateException.class, () -> noOpKrakenApi.candles(product("XBTUSD")).get());
+    }
+
+    @Test
     void should_throw_exception_for_ticker() {
-        assertThrows(IllegalStateException.class, () -> noOpKrakenApi.ticker(ProductCode.product("XBTUSD")).get());
+        assertThrows(IllegalStateException.class, () -> noOpKrakenApi.ticker(product("XBTUSD")).get());
     }
 
     @Test

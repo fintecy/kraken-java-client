@@ -3,10 +3,7 @@ package org.fintecy.md.kraken;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.failsafe.Policy;
 import org.fintecy.md.kraken.model.*;
-import org.fintecy.md.kraken.model.dto.AssetsResponse;
-import org.fintecy.md.kraken.model.dto.ProductsResponse;
-import org.fintecy.md.kraken.model.dto.ServerTimeResponse;
-import org.fintecy.md.kraken.model.dto.TickerResponse;
+import org.fintecy.md.kraken.model.dto.*;
 
 import java.io.IOException;
 import java.net.http.HttpClient;
@@ -56,6 +53,20 @@ public class KrakenClient implements KrakenApi {
     }
 
     @Override
+    public CompletableFuture<List<Candle>> candles(ProductCode pair, Interval interval, Optional<Instant> since) {
+        var httpRequest = HttpRequest.newBuilder()
+                .uri(create(rootPath + "/public/OHLC?pair=" + pair.getCode()
+                        + "&interval=" + interval.getMin()
+                        + since.map(instant -> "&since=" + instant.toEpochMilli()).orElse("")))
+                .build();
+
+        return client.sendAsync(httpRequest, ofString())
+                .thenApply(HttpResponse::body)
+                .thenApply(body -> parseResponse(body, OHLCResponse.class))
+                .thenApply(OHLCResponse::getDataOrThrow);
+    }
+
+    @Override
     public CompletableFuture<List<ExchangeRate>> ticker(ProductCode... pairs) {
         var httpRequest = HttpRequest.newBuilder()
                 .uri(create(rootPath + "/public/Ticker?pair=" + Stream.of(pairs)
@@ -66,7 +77,7 @@ public class KrakenClient implements KrakenApi {
         return client.sendAsync(httpRequest, ofString())
                 .thenApply(HttpResponse::body)
                 .thenApply(body -> parseResponse(body, TickerResponse.class))
-                .thenApply(TickerResponse::getRateOrThrow);
+                .thenApply(TickerResponse::getDataOrThrow);
     }
 
     @Override
@@ -82,7 +93,7 @@ public class KrakenClient implements KrakenApi {
         return client.sendAsync(httpRequest, ofString())
                 .thenApply(HttpResponse::body)
                 .thenApply(body -> parseResponse(body, ProductsResponse.class))
-                .thenApply(ProductsResponse::getProductsOrThrow);
+                .thenApply(ProductsResponse::getDataOrThrow);
     }
 
     @Override
@@ -94,7 +105,7 @@ public class KrakenClient implements KrakenApi {
         return client.sendAsync(httpRequest, ofString())
                 .thenApply(HttpResponse::body)
                 .thenApply(body -> parseResponse(body, AssetsResponse.class))
-                .thenApply(AssetsResponse::getAssetsOrThrow);
+                .thenApply(AssetsResponse::getDataOrThrow);
     }
 
     @Override

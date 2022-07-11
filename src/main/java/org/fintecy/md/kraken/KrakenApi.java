@@ -4,7 +4,10 @@ import org.fintecy.md.kraken.model.*;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+
+import static java.util.Optional.empty;
 
 /**
  * @author batiaev
@@ -12,6 +15,17 @@ import java.util.concurrent.CompletableFuture;
  */
 public interface KrakenApi {
     String ROOT_PATH = "https://api.kraken.com/0/";
+
+    /**
+     * @return candle data
+     * @see <a href="https://api.kraken.com/0/public/OHLC?pair=XBTUSD">test request</a>
+     * @see <a href="https://docs.kraken.com/rest/#operation/getOHLCData">api doc</a>
+     */
+    default CompletableFuture<List<Candle>> candles(ProductCode pair) {
+        return candles(pair, Interval.MINUTE, empty());
+    }
+
+    CompletableFuture<List<Candle>> candles(ProductCode pair, Interval interval, Optional<Instant> since);
 
     /**
      * @return ticker info

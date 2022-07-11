@@ -6,14 +6,8 @@ import com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.key.InstantKeyDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.key.LocalDateKeyDeserializer;
-import org.fintecy.md.kraken.model.Asset;
-import org.fintecy.md.kraken.model.ExchangeRate;
-import org.fintecy.md.kraken.model.Product;
-import org.fintecy.md.kraken.model.SystemStatus;
-import org.fintecy.md.kraken.model.dto.AssetsResponse;
-import org.fintecy.md.kraken.model.dto.ProductsResponse;
-import org.fintecy.md.kraken.model.dto.ServerTimeResponse;
-import org.fintecy.md.kraken.model.dto.TickerResponse;
+import org.fintecy.md.kraken.model.*;
+import org.fintecy.md.kraken.model.dto.*;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -38,6 +32,8 @@ public class KrakenModule extends SimpleModule {
         addDeserializer(ProductsResponse.class, ProductsResponseDeserializer.INSTANCE);
         addDeserializer(ExchangeRate.class, ExchangeRateDeserializer.INSTANCE);
         addDeserializer(TickerResponse.class, TickerResponseDeserializer.INSTANCE);
+        addDeserializer(Candle.class, CandleDeserializer.INSTANCE);
+        addDeserializer(OHLCResponse.class, OHLCResponseDeserializer.INSTANCE);
 
         addKeyDeserializer(LocalDate.class, LocalDateKeyDeserializer.INSTANCE);
         addKeyDeserializer(Instant.class, InstantKeyDeserializer.INSTANCE);
