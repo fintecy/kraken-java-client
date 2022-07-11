@@ -1,0 +1,37 @@
+package org.fintecy.md.kraken;
+
+import org.fintecy.md.kraken.model.*;
+
+import java.time.Instant;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+
+/**
+ * Available for testing purposes
+ */
+public class NoOpKrakenApi implements KrakenApi {
+    @Override
+    public CompletableFuture<List<ExchangeRate>> ticker(ProductCode... pairs) {
+        throw new IllegalStateException("not implemented");
+    }
+
+    @Override
+    public CompletableFuture<List<Product>> products(ProductDetailsLevel level, ProductCode... codes) {
+        throw new IllegalStateException("not implemented");
+    }
+
+    @Override
+    public CompletableFuture<List<Asset>> assets() {
+        throw new IllegalStateException("not implemented");
+    }
+
+    @Override
+    public CompletableFuture<SystemStatus> systemStatus() {
+        throw new IllegalStateException("not implemented");
+    }
+
+    @Override
+    public CompletableFuture<Instant> serverTime() {
+        return CompletableFuture.completedFuture(Instant.now());
+    }
+}
