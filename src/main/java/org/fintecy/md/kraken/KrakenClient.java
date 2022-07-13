@@ -53,6 +53,18 @@ public class KrakenClient implements KrakenApi {
     }
 
     @Override
+    public CompletableFuture<List<OrderBook>> orderBook(ProductCode pair, int count) {
+        var httpRequest = HttpRequest.newBuilder()
+                .uri(create(rootPath + "/public/Depth?pair=" + pair.getCode() + "&count=" + count))
+                .build();
+
+        return client.sendAsync(httpRequest, ofString())
+                .thenApply(HttpResponse::body)
+                .thenApply(body -> parseResponse(body, OrderBookResponse.class))
+                .thenApply(OrderBookResponse::getDataOrThrow);
+    }
+
+    @Override
     public CompletableFuture<List<Candle>> candles(ProductCode pair, Interval interval, Optional<Instant> since) {
         var httpRequest = HttpRequest.newBuilder()
                 .uri(create(rootPath + "/public/OHLC?pair=" + pair.getCode()

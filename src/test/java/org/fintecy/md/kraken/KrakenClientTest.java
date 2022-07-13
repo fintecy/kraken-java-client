@@ -21,6 +21,48 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class KrakenClientTest {
 
     @Test
+    void should_return_order_book() throws ExecutionException, InterruptedException {
+        //given
+        var product = product("XXBTZUSD");
+        stubFor(get("/public/Depth?pair=" + product.getCode() + "&count=100")
+                .willReturn(aResponse()
+                        .withBodyFile("orderBook.json")));
+
+        var expected = List.of(
+                new OrderBook(product, Instant.parse("2021-03-25T09:01:00Z"),
+                        List.of(
+                                new PriceLevel(
+                                        new BigDecimal("52523.00000"),
+                                        new BigDecimal("1.199"),
+                                        1616663113L),
+                                new PriceLevel(
+                                        new BigDecimal("52523.00000"),
+                                        new BigDecimal("1.199"),
+                                        1616663113L)
+                        ),
+                        List.of(
+                                new PriceLevel(
+                                        new BigDecimal("52523.00000"),
+                                        new BigDecimal("1.199"),
+                                        1616663113L),
+                                new PriceLevel(
+                                        new BigDecimal("52523.00000"),
+                                        new BigDecimal("1.199"),
+                                        1616663113L)
+                        )
+                )
+        );
+        //when
+        var actual = krakenClient()
+                .rootPath("http://localhost:7777")
+                .build()
+                .orderBook(product)
+                .get();
+        //then
+        assertEquals(expected, actual);
+    }
+
+    @Test
     void should_return_candle() throws ExecutionException, InterruptedException {
         //given
         var product = product("XXBTZUSD");

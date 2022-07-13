@@ -19,6 +19,11 @@ class NoOpKrakenApiTest {
     }
 
     @Test
+    void should_throw_exception_for_order_book() {
+        assertThrows(IllegalStateException.class, () -> noOpKrakenApi.orderBook(product("XBTUSD")).get());
+    }
+
+    @Test
     void should_throw_exception_for_ohlc() {
         assertThrows(IllegalStateException.class, () -> noOpKrakenApi.candles(product("XBTUSD")).get());
     }

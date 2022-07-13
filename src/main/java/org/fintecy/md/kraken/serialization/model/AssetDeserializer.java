@@ -1,4 +1,4 @@
-package org.fintecy.md.kraken.serialization;
+package org.fintecy.md.kraken.serialization.model;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;

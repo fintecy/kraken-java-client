@@ -15,6 +15,19 @@ import static java.util.Optional.empty;
  */
 public interface KrakenApi {
     String ROOT_PATH = "https://api.kraken.com/0/";
+    int DEFAULT_ORDER_BOOK_COUNT = 100;
+    Interval DEFAULT_CANDLE_INTERVAL = Interval.MINUTE;
+
+    /**
+     * @return candle data
+     * @see <a href="https://api.kraken.com/0/public/Depth?pair=XBTUSD">test request</a>
+     * @see <a href="https://docs.kraken.com/rest/#operation/getOrderBook">api doc</a>
+     */
+    default CompletableFuture<List<OrderBook>> orderBook(ProductCode pair) {
+        return orderBook(pair, DEFAULT_ORDER_BOOK_COUNT);
+    }
+
+    CompletableFuture<List<OrderBook>> orderBook(ProductCode pair, int count);
 
     /**
      * @return candle data
@@ -22,7 +35,7 @@ public interface KrakenApi {
      * @see <a href="https://docs.kraken.com/rest/#operation/getOHLCData">api doc</a>
      */
     default CompletableFuture<List<Candle>> candles(ProductCode pair) {
-        return candles(pair, Interval.MINUTE, empty());
+        return candles(pair, DEFAULT_CANDLE_INTERVAL, empty());
     }
 
     CompletableFuture<List<Candle>> candles(ProductCode pair, Interval interval, Optional<Instant> since);
