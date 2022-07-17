@@ -53,6 +53,19 @@ public class KrakenClient implements KrakenApi {
     }
 
     @Override
+    public CompletableFuture<List<Trade>> recentTrades(ProductCode pair, Optional<Instant> since) {
+        var httpRequest = HttpRequest.newBuilder()
+                .uri(create(rootPath + "/public/Trades?pair=" + pair.getCode()
+                        + (since.map(instant -> "&since=" + instant.toEpochMilli()).orElse(""))))
+                .build();
+
+        return client.sendAsync(httpRequest, ofString())
+                .thenApply(HttpResponse::body)
+                .thenApply(body -> parseResponse(body, TradeResponse.class))
+                .thenApply(TradeResponse::getDataOrThrow);
+    }
+
+    @Override
     public CompletableFuture<List<OrderBook>> orderBook(ProductCode pair, int count) {
         var httpRequest = HttpRequest.newBuilder()
                 .uri(create(rootPath + "/public/Depth?pair=" + pair.getCode() + "&count=" + count))

@@ -21,6 +21,50 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class KrakenClientTest {
 
     @Test
+    void should_return_recent_trades() throws ExecutionException, InterruptedException {
+        //given
+        var product = product("XXBTZUSD");
+        stubFor(get("/public/Trades?pair=" + product.getCode())
+                .willReturn(aResponse()
+                        .withBodyFile("trades.json")));
+
+        var expected = List.of(
+                new Trade(product, Instant.parse("2021-03-25T09:13:38.036Z"),
+                        new PriceLevel(
+                                new BigDecimal("52478.90000"),
+                                new BigDecimal("0.00640000"),
+                                0L),
+                        OrderType.MARKET,
+                        Side.BUY
+                ),
+                new Trade(product, Instant.parse("2021-03-25T09:13:38.037Z"),
+                        new PriceLevel(
+                                new BigDecimal("52490.50000"),
+                                new BigDecimal("0.01169993"),
+                                0L),
+                        OrderType.MARKET,
+                        Side.BUY
+                ),
+                new Trade(product, Instant.parse("2021-03-25T09:13:42.136Z"),
+                        new PriceLevel(
+                                new BigDecimal("52478.80000"),
+                                new BigDecimal("0.04107375"),
+                                0L),
+                        OrderType.MARKET,
+                        Side.BUY
+                )
+        );
+        //when
+        var actual = krakenClient()
+                .rootPath("http://localhost:7777")
+                .build()
+                .recentTrades(product)
+                .get();
+        //then
+        assertEquals(expected, actual);
+    }
+
+    @Test
     void should_return_order_book() throws ExecutionException, InterruptedException {
         //given
         var product = product("XXBTZUSD");
@@ -29,26 +73,26 @@ class KrakenClientTest {
                         .withBodyFile("orderBook.json")));
 
         var expected = List.of(
-                new OrderBook(product, Instant.parse("2021-03-25T09:01:00Z"),
+                new OrderBook(product, Instant.parse("2021-03-25T09:05:13Z"),
                         List.of(
                                 new PriceLevel(
                                         new BigDecimal("52523.00000"),
                                         new BigDecimal("1.199"),
                                         1616663113L),
                                 new PriceLevel(
-                                        new BigDecimal("52523.00000"),
-                                        new BigDecimal("1.199"),
-                                        1616663113L)
+                                        new BigDecimal("52536.00000"),
+                                        new BigDecimal("0.300"),
+                                        1616663112L)
                         ),
                         List.of(
                                 new PriceLevel(
-                                        new BigDecimal("52523.00000"),
-                                        new BigDecimal("1.199"),
-                                        1616663113L),
+                                        new BigDecimal("52522.90000"),
+                                        new BigDecimal("0.753"),
+                                        1616663112L),
                                 new PriceLevel(
-                                        new BigDecimal("52523.00000"),
-                                        new BigDecimal("1.199"),
-                                        1616663113L)
+                                        new BigDecimal("52522.80000"),
+                                        new BigDecimal("0.006"),
+                                        1616663109)
                         )
                 )
         );

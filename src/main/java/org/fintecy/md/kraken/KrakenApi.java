@@ -20,6 +20,17 @@ public interface KrakenApi {
 
     /**
      * @return candle data
+     * @see <a href="https://api.kraken.com/0/public/Trades?pair=XBTUSD">test request</a>
+     * @see <a href="https://docs.kraken.com/rest/#operation/getRecentTrades">api doc</a>
+     */
+    default CompletableFuture<List<Trade>> recentTrades(ProductCode pair) {
+        return recentTrades(pair, empty());
+    }
+
+    CompletableFuture<List<Trade>> recentTrades(ProductCode pair, Optional<Instant> since);
+
+    /**
+     * @return candle data
      * @see <a href="https://api.kraken.com/0/public/Depth?pair=XBTUSD">test request</a>
      * @see <a href="https://docs.kraken.com/rest/#operation/getOrderBook">api doc</a>
      */
