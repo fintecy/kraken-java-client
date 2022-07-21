@@ -19,6 +19,16 @@ class NoOpKrakenApiTest {
     }
 
     @Test
+    void should_throw_exception_for_recent_spread() {
+        assertThrows(IllegalStateException.class, () -> noOpKrakenApi.recentSpreads(product("XBTUSD")).get());
+    }
+
+    @Test
+    void should_throw_exception_for_recent_trades() {
+        assertThrows(IllegalStateException.class, () -> noOpKrakenApi.recentTrades(product("XBTUSD")).get());
+    }
+
+    @Test
     void should_throw_exception_for_order_book() {
         assertThrows(IllegalStateException.class, () -> noOpKrakenApi.orderBook(product("XBTUSD")).get());
     }

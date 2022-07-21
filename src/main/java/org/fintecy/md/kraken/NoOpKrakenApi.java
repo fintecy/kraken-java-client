@@ -12,6 +12,11 @@ import java.util.concurrent.CompletableFuture;
  */
 public class NoOpKrakenApi implements KrakenApi {
     @Override
+    public CompletableFuture<List<Spread>> recentSpreads(ProductCode pair, Optional<Instant> since) {
+        throw new IllegalStateException("not implemented");
+    }
+
+    @Override
     public CompletableFuture<List<Trade>> recentTrades(ProductCode pair, Optional<Instant> since) {
         throw new IllegalStateException("not implemented");
     }

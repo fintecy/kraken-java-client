@@ -40,6 +40,8 @@ public class KrakenModule extends SimpleModule {
         addDeserializer(OrderBookResponse.class, OrderBookResponseDeserializer.INSTANCE);
         addDeserializer(Trade.class, TradeDeserializer.INSTANCE);
         addDeserializer(TradeResponse.class, TradeResponseDeserializer.INSTANCE);
+        addDeserializer(Spread.class, SpreadDeserializer.INSTANCE);
+        addDeserializer(SpreadResponse.class, SpreadResponseDeserializer.INSTANCE);
 
         addKeyDeserializer(LocalDate.class, LocalDateKeyDeserializer.INSTANCE);
         addKeyDeserializer(Instant.class, InstantKeyDeserializer.INSTANCE);

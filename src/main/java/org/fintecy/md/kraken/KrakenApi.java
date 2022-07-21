@@ -19,7 +19,18 @@ public interface KrakenApi {
     Interval DEFAULT_CANDLE_INTERVAL = Interval.MINUTE;
 
     /**
-     * @return candle data
+     * @return recent spreads
+     * @see <a href="https://api.kraken.com/0/public/Spread?pair=XBTUSD">test request</a>
+     * @see <a href="https://docs.kraken.com/rest/#operation/getRecentSpreads">api doc</a>
+     */
+    default CompletableFuture<List<Spread>> recentSpreads(ProductCode pair) {
+        return recentSpreads(pair, empty());
+    }
+
+    CompletableFuture<List<Spread>> recentSpreads(ProductCode pair, Optional<Instant> since);
+
+    /**
+     * @return recent trades
      * @see <a href="https://api.kraken.com/0/public/Trades?pair=XBTUSD">test request</a>
      * @see <a href="https://docs.kraken.com/rest/#operation/getRecentTrades">api doc</a>
      */

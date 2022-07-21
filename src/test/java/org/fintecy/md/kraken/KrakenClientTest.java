@@ -21,6 +21,38 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class KrakenClientTest {
 
     @Test
+    void should_return_recent_spread() throws ExecutionException, InterruptedException {
+        //given
+        var product = product("XXBTZUSD");
+        stubFor(get("/public/Spread?pair=" + product.getCode())
+                .willReturn(aResponse()
+                        .withBodyFile("spread.json")));
+
+        var expected = List.of(
+                new Spread(product, Instant.parse("2019-01-22T01:29:10Z"),
+                        new BigDecimal("3538.70000"),
+                        new BigDecimal("3541.50000")
+                ),
+                new Spread(product, Instant.parse("2019-01-22T01:29:11Z"),
+                        new BigDecimal("3538.80000"),
+                        new BigDecimal("3541.50000")
+                ),
+                new Spread(product, Instant.parse("2019-01-22T01:29:14Z"),
+                        new BigDecimal("3538.80000"),
+                        new BigDecimal("3541.40000")
+                )
+        );
+        //when
+        var actual = krakenClient()
+                .rootPath("http://localhost:7777")
+                .build()
+                .recentSpreads(product)
+                .get();
+        //then
+        assertEquals(expected, actual);
+    }
+
+    @Test
     void should_return_recent_trades() throws ExecutionException, InterruptedException {
         //given
         var product = product("XXBTZUSD");
